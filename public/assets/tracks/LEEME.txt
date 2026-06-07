@@ -1,0 +1,16 @@
+TRACKS GPX DE LAS RUTAS
+=======================
+
+Deja aquí los ficheros GPX con estos nombres exactos. En cuanto existan, el
+mapa de cada ruta dibuja el track nativo (línea almagre) y ajusta el encuadre.
+Si un fichero no está, el mapa muestra la zona con un marcador en el pueblo.
+
+  ojuelos-bajos-altos.gpx   → Ojuelos Bajos – Ojuelos Altos
+  cardenchosa-ojuelos.gpx   → De la Cardenchosa a Ojuelos Altos
+  circula-ojuelos.gpx       → Circula por Ojuelos Altos
+
+CÓMO CONSEGUIR EL GPX
+---------------------
+En Wikiloc, abre la ruta (los enlaces están en la web, botón "Abrir en Wikiloc"),
+inicia sesión y usa "Descargar > Archivo GPX". Renombra al nombre de arriba y
+deja el fichero en esta carpeta. Vale cualquier GPX con <trkpt> o <rtept>.

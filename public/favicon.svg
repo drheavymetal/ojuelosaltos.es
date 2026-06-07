@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="El horno de Ojuelos Altos">
+  <rect width="64" height="64" rx="14" fill="#f7f3ea"/>
+  <g fill="none" stroke="#1f7a44" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Chimenea (detrás) -->
+    <path d="M40 9 h11 v4 h-11 z" fill="#1f7a44" stroke="none"/>
+    <path d="M42 13 L40.5 47 H50.5 L49 13 Z"/>
+    <path d="M41.6 22 H49.4 M41.2 31 H49.8 M40.8 40 H50.2" stroke-width="1.4"/>
+    <!-- Base cúbica (delante) -->
+    <path d="M13 35 L13 53 H35 V35"/>
+    <path d="M13 35 L18 31 H40 L35 35 Z"/>
+    <path d="M35 35 L40 31 V49 L35 53" stroke-width="1.6"/>
+    <!-- Cúpula del horno -->
+    <path d="M13 35 A 11 11 0 0 1 35 35" fill="#1f7a44" fill-opacity="0.07"/>
+    <path d="M15.5 30.5 A 8.4 8.4 0 0 1 32.5 30.5" stroke-width="1.4"/>
+    <path d="M18.5 26.6 A 5.6 5.6 0 0 1 29.5 26.6" stroke-width="1.4"/>
+    <path d="M20 35 v-4 a4 4 0 0 1 8 0 v4 z" fill="#1f7a44" stroke="none"/>
+  </g>
+</svg>
