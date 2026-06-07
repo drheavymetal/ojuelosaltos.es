@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useCountUp } from "./hooks";
-import { SOCIO_EMAIL, type Foto } from "./data";
+import { SOCIO_EMAIL } from "./data";
+import { useT } from "./i18n";
 
 export const H2 =
   "font-serif font-semibold leading-[1.08] tracking-tight text-[clamp(1.9rem,4.2vw,3.1rem)]";
@@ -67,57 +68,72 @@ export function Stat({ number, label }: { number: ReactNode; label: string }) {
   );
 }
 
-export function GalleryItem({ foto }: { foto: Foto }) {
+export function GalleryItem({
+  src,
+  caption,
+  wide,
+}: {
+  src: string;
+  caption: string;
+  wide?: boolean;
+}) {
   const [err, setErr] = useState(false);
-  const span = foto.wide ? "sm:col-span-2" : "";
+  const span = wide ? "sm:col-span-2" : "";
   if (err) {
     return (
       <figure
         className={`grid h-[210px] place-items-center rounded-xl border-2 border-dashed border-almagre/35 bg-cream p-5 text-center ${span}`}
       >
-        <span className="font-semibold text-almagre">📷 {foto.caption}</span>
+        <span className="font-semibold text-almagre">📷 {caption}</span>
       </figure>
     );
   }
   return (
     <figure className={`group relative h-[210px] overflow-hidden rounded-xl shadow ${span}`}>
       <img
-        src={foto.src}
-        alt={foto.caption}
+        src={src}
+        alt={caption}
         loading="lazy"
         onError={() => setErr(true)}
         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
       <figcaption className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent px-3 pb-2.5 pt-5 text-sm font-medium text-white">
-        {foto.caption}
+        {caption}
       </figcaption>
     </figure>
   );
 }
 
+// Valores canónicos en castellano para el correo (que va SIEMPRE en español),
+// por índice con form.antiguedadOpts del diccionario.
+const ANTIGUEDAD_ES = [
+  "Soy nuevo (5 años o menos)",
+  "Soy socio/vecino de siempre (más de 5 años)",
+  "Familia con menores",
+  "Prefiero que me lo expliquéis",
+];
+
 export function MembershipForm() {
+  const { form } = useT();
   const [f, setF] = useState({
     nombre: "",
     apellidos: "",
     telefono: "",
     email: "",
-    antiguedad: "Soy nuevo (5 años o menos)",
+    antiguedad: 0, // índice
     mensaje: "",
   });
-  const set =
-    (k: keyof typeof f) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-      setF({ ...f, [k]: e.target.value });
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // El correo a la junta va siempre en castellano, lo lea quien lo lea.
     const subject = `Quiero hacerme socio de El Horno — ${f.nombre} ${f.apellidos}`.trim();
     const body =
       `Hola, quiero hacerme socio de la Asociación de Vecinos "El Horno".\n\n` +
       `Nombre: ${f.nombre} ${f.apellidos}\n` +
       `Teléfono: ${f.telefono}\n` +
       `Email: ${f.email}\n` +
-      `Situación: ${f.antiguedad}\n\n` +
+      `Situación: ${ANTIGUEDAD_ES[f.antiguedad]}\n\n` +
       `Mensaje:\n${f.mensaje}\n`;
     window.location.href = `mailto:${SOCIO_EMAIL}?subject=${encodeURIComponent(
       subject,
@@ -132,43 +148,42 @@ export function MembershipForm() {
     <form onSubmit={onSubmit} className="rounded-2xl border border-black/10 bg-cream p-6 shadow-sm sm:p-8">
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className={label} htmlFor="nombre">Nombre *</label>
-          <input id="nombre" required value={f.nombre} onChange={set("nombre")} className={field} placeholder="Tu nombre" />
+          <label className={label} htmlFor="nombre">{form.nombre} *</label>
+          <input id="nombre" required value={f.nombre} onChange={(e) => setF({ ...f, nombre: e.target.value })} className={field} placeholder={form.nombrePh} />
         </div>
         <div>
-          <label className={label} htmlFor="apellidos">Apellidos *</label>
-          <input id="apellidos" required value={f.apellidos} onChange={set("apellidos")} className={field} placeholder="Tus apellidos" />
+          <label className={label} htmlFor="apellidos">{form.apellidos} *</label>
+          <input id="apellidos" required value={f.apellidos} onChange={(e) => setF({ ...f, apellidos: e.target.value })} className={field} placeholder={form.apellidosPh} />
         </div>
         <div>
-          <label className={label} htmlFor="telefono">Teléfono *</label>
-          <input id="telefono" required type="tel" value={f.telefono} onChange={set("telefono")} className={field} placeholder="600 000 000" />
+          <label className={label} htmlFor="telefono">{form.telefono} *</label>
+          <input id="telefono" required type="tel" value={f.telefono} onChange={(e) => setF({ ...f, telefono: e.target.value })} className={field} placeholder={form.telefonoPh} />
         </div>
         <div>
-          <label className={label} htmlFor="email">Email</label>
-          <input id="email" type="email" value={f.email} onChange={set("email")} className={field} placeholder="tucorreo@ejemplo.com" />
+          <label className={label} htmlFor="email">{form.email}</label>
+          <input id="email" type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} className={field} placeholder={form.emailPh} />
         </div>
         <div className="sm:col-span-2">
-          <label className={label} htmlFor="antiguedad">¿Eres vecino nuevo o de siempre?</label>
-          <select id="antiguedad" value={f.antiguedad} onChange={set("antiguedad")} className={field}>
-            <option>Soy nuevo (5 años o menos)</option>
-            <option>Soy socio/vecino de siempre (más de 5 años)</option>
-            <option>Familia con menores</option>
-            <option>Prefiero que me lo expliquéis</option>
+          <label className={label} htmlFor="antiguedad">{form.antiguedadLabel}</label>
+          <select id="antiguedad" value={f.antiguedad} onChange={(e) => setF({ ...f, antiguedad: Number(e.target.value) })} className={field}>
+            {form.antiguedadOpts.map((opt, i) => (
+              <option key={i} value={i}>{opt}</option>
+            ))}
           </select>
         </div>
         <div className="sm:col-span-2">
-          <label className={label} htmlFor="mensaje">Mensaje</label>
-          <textarea id="mensaje" rows={4} value={f.mensaje} onChange={set("mensaje")} className={field} placeholder="Cuéntanos lo que quieras (cuántos sois en la familia, dudas...)" />
+          <label className={label} htmlFor="mensaje">{form.mensaje}</label>
+          <textarea id="mensaje" rows={4} value={f.mensaje} onChange={(e) => setF({ ...f, mensaje: e.target.value })} className={field} placeholder={form.mensajePh} />
         </div>
       </div>
       <button
         type="submit"
         className="mt-6 w-full rounded-full bg-verde px-6 py-3.5 font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-verde-dark sm:w-auto"
       >
-        Enviar y hacerme socio →
+        {form.submit}
       </button>
       <p className="mt-3 text-sm text-inksoft">
-        Se abrirá tu aplicación de correo con el mensaje listo para enviar a {SOCIO_EMAIL}.
+        {form.note} {SOCIO_EMAIL}.
       </p>
     </form>
   );

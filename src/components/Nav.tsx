@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { LanguageSwitcher } from "../i18n";
 
 export type NavLink = { href: string; label: string };
 export type NavCta = { href: string; label: string; external?: boolean };
@@ -53,6 +54,7 @@ export default function Nav({
             {l.label}
           </a>
         ))}
+        <LanguageSwitcher />
         <a
           href={cta.href}
           target={ctaTarget}
@@ -63,15 +65,18 @@ export default function Nav({
         </a>
       </nav>
 
-      <button
-        aria-label={open ? "Cerrar menú" : "Abrir menú"}
-        onClick={() => setOpen((v) => !v)}
-        className="relative z-[60] flex h-10 w-10 flex-col items-center justify-center gap-[5px] md:hidden"
-      >
+      <div className="flex items-center gap-2 md:hidden">
+        <LanguageSwitcher />
+        <button
+          aria-label={open ? "Cerrar menú" : "Abrir menú"}
+          onClick={() => setOpen((v) => !v)}
+          className="relative z-[60] flex h-10 w-10 flex-col items-center justify-center gap-[5px]"
+        >
         <span className={`h-[2.5px] w-7 rounded bg-ink transition-all duration-300 ${open ? "translate-y-[7.5px] rotate-45" : ""}`} />
         <span className={`h-[2.5px] w-7 rounded bg-ink transition-all duration-300 ${open ? "opacity-0" : ""}`} />
         <span className={`h-[2.5px] w-7 rounded bg-ink transition-all duration-300 ${open ? "-translate-y-[7.5px] -rotate-45" : ""}`} />
-      </button>
+        </button>
+      </div>
 
       <div
         className={`fixed inset-0 z-[55] flex flex-col bg-cream transition-all duration-300 md:hidden ${

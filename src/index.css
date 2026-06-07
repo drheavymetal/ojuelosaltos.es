@@ -122,6 +122,25 @@
   );
 }
 
+/* ===== Prosa rica i18n: estilo del énfasis dentro de párrafos traducidos ===== */
+.rich em {
+  font-style: italic;
+}
+.rich strong {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.rich a {
+  font-weight: 600;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+/* Variante para fondos oscuros (verde, almagre, azulejo, noche) */
+.rich-light strong {
+  color: #fff;
+}
+
 /* ===== Leaflet: encaje visual ===== */
 .leaflet-container {
   font-family: var(--font-sans);

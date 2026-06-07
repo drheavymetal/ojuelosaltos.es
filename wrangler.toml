@@ -1,0 +1,9 @@
+# Pages (sitio público ojuelosaltos.es). Functions en ./functions sirven /api/* (solo lectura).
+name = "elhorno"
+compatibility_date = "2026-01-01"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ojuelos-news"
+database_id = "077943df-92a3-4d45-b8a6-5495c1a12ee6"
