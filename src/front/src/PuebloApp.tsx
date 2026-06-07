@@ -36,7 +36,6 @@ export default function PuebloApp() {
       description: p.seo.description,
       canonical: "https://ojuelosaltos.es/",
       image: "https://ojuelosaltos.es/assets/fotos/foto-aldea.jpg",
-      favicon: "/favicon.svg",
     });
   }, [p]);
 

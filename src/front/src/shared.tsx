@@ -12,19 +12,9 @@ export function setSeo(o: {
   description: string;
   canonical: string;
   image: string;
-  favicon?: string;
 }) {
   document.title = o.title;
-  if (o.favicon) {
-    let icon = document.head.querySelector<HTMLLinkElement>('link[rel="icon"]');
-    if (!icon) {
-      icon = document.createElement("link");
-      icon.rel = "icon";
-      document.head.appendChild(icon);
-    }
-    icon.type = o.favicon.endsWith(".svg") ? "image/svg+xml" : "image/png";
-    icon.href = o.favicon;
-  }
+  // El favicon (horno) es común a toda la web y se declara en index.html (svg + ico + apple-touch).
   const setMeta = (sel: string, attr: string, key: string, val: string) => {
     let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
     if (!el) {

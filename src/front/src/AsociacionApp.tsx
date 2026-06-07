@@ -30,7 +30,6 @@ export default function AsociacionApp() {
       description: a.seo.description,
       canonical: "https://elhorno.ojuelosaltos.es/",
       image: "https://elhorno.ojuelosaltos.es/assets/fotos/foto-piscina.jpg",
-      favicon: "/assets/logo.png",
     });
   }, [a]);
 
