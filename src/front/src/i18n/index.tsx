@@ -15,13 +15,41 @@ import { gl } from "./locales/gl";
 import { ca } from "./locales/ca";
 import { eu } from "./locales/eu";
 import { ast } from "./locales/ast";
+import { nl } from "./locales/nl";
+import { ja } from "./locales/ja";
+import { zh } from "./locales/zh";
 
-export type Lang = "es" | "en" | "pt" | "fr" | "de" | "gl" | "ca" | "eu" | "ast";
+export type Lang =
+  | "es"
+  | "en"
+  | "pt"
+  | "fr"
+  | "de"
+  | "nl"
+  | "ja"
+  | "zh"
+  | "gl"
+  | "ca"
+  | "eu"
+  | "ast";
 
 // Orden del selector: castellano primero, luego internacionales, luego lenguas de España.
-export const LANG_ORDER: Lang[] = ["es", "en", "pt", "fr", "de", "gl", "ca", "eu", "ast"];
+export const LANG_ORDER: Lang[] = [
+  "es",
+  "en",
+  "pt",
+  "fr",
+  "de",
+  "nl",
+  "ja",
+  "zh",
+  "gl",
+  "ca",
+  "eu",
+  "ast",
+];
 
-export const DICTS: Record<Lang, Dict> = { es, en, pt, fr, de, gl, ca, eu, ast };
+export const DICTS: Record<Lang, Dict> = { es, en, pt, fr, de, nl, ja, zh, gl, ca, eu, ast };
 
 const STORAGE_KEY = "oa_lang";
 
