@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://ojuelosaltos.es/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ojuelosaltos.es/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ojuelosaltos.es/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://ojuelosaltos.es/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ojuelosaltos.es/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://ojuelosaltos.es/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://ojuelosaltos.es/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://ojuelosaltos.es/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://ojuelosaltos.es/?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://ojuelosaltos.es/?lang=gl"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://ojuelosaltos.es/?lang=ca"/>
+    <xhtml:link rel="alternate" hreflang="eu" href="https://ojuelosaltos.es/?lang=eu"/>
+    <xhtml:link rel="alternate" hreflang="ast" href="https://ojuelosaltos.es/?lang=ast"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ojuelosaltos.es/"/>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://elhorno.ojuelosaltos.es/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://elhorno.ojuelosaltos.es/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://elhorno.ojuelosaltos.es/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://elhorno.ojuelosaltos.es/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://elhorno.ojuelosaltos.es/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://elhorno.ojuelosaltos.es/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://elhorno.ojuelosaltos.es/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://elhorno.ojuelosaltos.es/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://elhorno.ojuelosaltos.es/?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://elhorno.ojuelosaltos.es/?lang=gl"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://elhorno.ojuelosaltos.es/?lang=ca"/>
+    <xhtml:link rel="alternate" hreflang="eu" href="https://elhorno.ojuelosaltos.es/?lang=eu"/>
+    <xhtml:link rel="alternate" hreflang="ast" href="https://elhorno.ojuelosaltos.es/?lang=ast"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://elhorno.ojuelosaltos.es/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>

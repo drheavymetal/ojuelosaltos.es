@@ -2,9 +2,10 @@ import { useEffect } from "react";
 import Nav from "./components/Nav";
 import { Reveal, Kicker } from "./components/ui";
 import NewsSection from "./components/NewsSection";
-import { H2, Counter, Stat, MembershipForm, setSeo } from "./shared";
-import { useT, Rich } from "./i18n";
+import { H2, Counter, Stat, MembershipForm, setSeo, setStructuredData } from "./shared";
+import { useT, useLang, Rich } from "./i18n";
 import {
+  OJUELOS,
   WHATSAPP_URL,
   FACEBOOK_URL,
   SOCIO_EMAIL,
@@ -14,6 +15,7 @@ import {
 
 export default function AsociacionApp() {
   const t = useT();
+  const { lang } = useLang();
   const a = t.asoc;
 
   const links = [
@@ -28,10 +30,30 @@ export default function AsociacionApp() {
     setSeo({
       title: a.seo.title,
       description: a.seo.description,
-      canonical: "https://elhorno.ojuelosaltos.es/",
+      baseUrl: "https://elhorno.ojuelosaltos.es/",
       image: "https://elhorno.ojuelosaltos.es/assets/fotos/foto-piscina.jpg",
+      lang,
     });
-  }, [a]);
+    setStructuredData({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: 'Asociación de Vecinos "El Horno"',
+      url: "https://elhorno.ojuelosaltos.es/",
+      email: SOCIO_EMAIL,
+      logo: "https://elhorno.ojuelosaltos.es/assets/logo.png",
+      description: a.seo.description,
+      areaServed: "Ojuelos Altos, Fuente Obejuna, Córdoba",
+      location: {
+        "@type": "Place",
+        name: "Ojuelos Altos",
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: OJUELOS[0],
+          longitude: OJUELOS[1],
+        },
+      },
+    });
+  }, [a, lang]);
 
   return (
     <>
@@ -141,7 +163,10 @@ export default function AsociacionApp() {
             <Rich className="rich rich-light mx-auto mb-9 max-w-[60ch] text-[clamp(1.1rem,2vw,1.35rem)] text-white/90" html={a.piscina.lead} />
           </Reveal>
           <Reveal as="figure" className="mx-auto mb-12 max-w-[760px]">
-            <img src="/assets/fotos/foto-piscina.jpg" alt={a.piscina.imgAlt} loading="lazy" className="w-full rounded-2xl border-[3px] border-white/50 shadow-2xl" />
+            <picture>
+              <source srcSet="/assets/fotos/foto-piscina.webp" type="image/webp" />
+              <img src="/assets/fotos/foto-piscina.jpg" alt={a.piscina.imgAlt} loading="lazy" width={1401} height={788} className="h-auto w-full rounded-2xl border-[3px] border-white/50 shadow-2xl" />
+            </picture>
           </Reveal>
           <div className="mb-12 grid gap-6 sm:grid-cols-3">
             {a.piscina.cards.map((f, i) => (

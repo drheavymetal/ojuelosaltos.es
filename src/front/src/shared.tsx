@@ -1,42 +1,77 @@
 import { useState, type ReactNode } from "react";
 import { useCountUp } from "./hooks";
 import { SOCIO_EMAIL } from "./data";
-import { useT } from "./i18n";
+import { useT, LANG_ORDER, DICTS, langHref, DEFAULT_LANG, type Lang } from "./i18n";
 
 export const H2 =
   "font-serif font-semibold leading-[1.08] tracking-tight text-[clamp(1.9rem,4.2vw,3.1rem)]";
 
-/** Ajusta título + meta SEO/Open Graph según el sitio activo. */
+function upsertMeta(attr: string, key: string, val: string) {
+  let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
+  if (!el) {
+    el = document.createElement("meta");
+    el.setAttribute(attr, key);
+    document.head.appendChild(el);
+  }
+  el.setAttribute("content", val);
+}
+
+/**
+ * Ajusta título, meta SEO/Open Graph, canónica y alternates hreflang según el
+ * sitio (`baseUrl`) y el idioma activos. La canónica de cada idioma es `baseUrl?lang=xx`
+ * (el castellano va sin query y hace de x-default), igual que en el sitemap.
+ */
 export function setSeo(o: {
   title: string;
   description: string;
-  canonical: string;
+  baseUrl: string;
   image: string;
+  lang: Lang;
 }) {
   document.title = o.title;
   // El favicon (horno) es común a toda la web y se declara en index.html (svg + ico + apple-touch).
-  const setMeta = (sel: string, attr: string, key: string, val: string) => {
-    let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
-    if (!el) {
-      el = document.createElement("meta");
-      el.setAttribute(attr, key);
-      document.head.appendChild(el);
-    }
-    el.setAttribute("content", val);
-    return sel;
-  };
+  const canonical = langHref(o.baseUrl, o.lang);
+
   let link = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
   if (!link) {
     link = document.createElement("link");
     link.rel = "canonical";
     document.head.appendChild(link);
   }
-  link.href = o.canonical;
-  setMeta("", "name", "description", o.description);
-  setMeta("", "property", "og:title", o.title);
-  setMeta("", "property", "og:description", o.description);
-  setMeta("", "property", "og:url", o.canonical);
-  setMeta("", "property", "og:image", o.image);
+  link.href = canonical;
+
+  upsertMeta("name", "description", o.description);
+  upsertMeta("property", "og:title", o.title);
+  upsertMeta("property", "og:description", o.description);
+  upsertMeta("property", "og:url", canonical);
+  upsertMeta("property", "og:image", o.image);
+  upsertMeta("property", "og:locale", DICTS[o.lang].meta.ogLocale);
+
+  // Alternates hreflang: uno por idioma + x-default (castellano). Se regeneran en cada cambio.
+  document.head.querySelectorAll("link[data-oa-alt]").forEach((el) => el.remove());
+  const addAlt = (hreflang: string, href: string) => {
+    const el = document.createElement("link");
+    el.rel = "alternate";
+    el.setAttribute("hreflang", hreflang);
+    el.setAttribute("href", href);
+    el.setAttribute("data-oa-alt", "1");
+    document.head.appendChild(el);
+  };
+  for (const l of LANG_ORDER) addAlt(DICTS[l].meta.htmlLang, langHref(o.baseUrl, l));
+  addAlt("x-default", langHref(o.baseUrl, DEFAULT_LANG));
+}
+
+/** Inyecta (o reemplaza) el bloque JSON-LD de datos estructurados de la página. */
+export function setStructuredData(data: unknown) {
+  const ID = "oa-jsonld";
+  let el = document.getElementById(ID) as HTMLScriptElement | null;
+  if (!el) {
+    el = document.createElement("script");
+    el.id = ID;
+    el.type = "application/ld+json";
+    document.head.appendChild(el);
+  }
+  el.textContent = JSON.stringify(data);
 }
 
 export function Counter({ end, suffix = "" }: { end: number; suffix?: string }) {
@@ -80,13 +115,16 @@ export function GalleryItem({
   }
   return (
     <figure className={`group relative h-[210px] overflow-hidden rounded-xl shadow ${span}`}>
-      <img
-        src={src}
-        alt={caption}
-        loading="lazy"
-        onError={() => setErr(true)}
-        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-      />
+      <picture>
+        <source srcSet={src.replace(/\.jpg$/, ".webp")} type="image/webp" />
+        <img
+          src={src}
+          alt={caption}
+          loading="lazy"
+          onError={() => setErr(true)}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      </picture>
       <figcaption className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent px-3 pb-2.5 pt-5 text-sm font-medium text-white">
         {caption}
       </figcaption>

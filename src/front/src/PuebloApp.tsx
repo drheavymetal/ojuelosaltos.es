@@ -1,10 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import Nav from "./components/Nav";
 import VillageLogo from "./components/VillageLogo";
-import { Reveal, Kicker, MapView, TrackMap } from "./components/ui";
+import { Reveal, Kicker } from "./components/ui";
+
+// Leaflet se carga aparte (code-split): fuera del bundle inicial, llega al ver el mapa.
+const MapView = lazy(() => import("./components/maps").then((m) => ({ default: m.MapView })));
+const TrackMap = lazy(() => import("./components/maps").then((m) => ({ default: m.TrackMap })));
 import NewsSection from "./components/NewsSection";
-import { H2, Counter, Stat, GalleryItem, setSeo } from "./shared";
-import { useT, Rich } from "./i18n";
+import { H2, Counter, Stat, GalleryItem, setSeo, setStructuredData } from "./shared";
+import { useT, useLang, Rich } from "./i18n";
 import {
   OJUELOS,
   FUENTE_OBEJUNA,
@@ -18,6 +22,7 @@ import {
 
 export default function PuebloApp() {
   const t = useT();
+  const { lang } = useLang();
   const p = t.pueblo;
 
   const links = [
@@ -34,10 +39,51 @@ export default function PuebloApp() {
     setSeo({
       title: p.seo.title,
       description: p.seo.description,
-      canonical: "https://ojuelosaltos.es/",
+      baseUrl: "https://ojuelosaltos.es/",
       image: "https://ojuelosaltos.es/assets/fotos/foto-aldea.jpg",
+      lang,
     });
-  }, [p]);
+    // Datos estructurados: el pueblo como atracción turística + los dos bares como
+    // negocios locales (datos reales de data.ts). Ayuda a Google a mostrar ficha y mapa.
+    setStructuredData({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "TouristAttraction",
+          "@id": "https://ojuelosaltos.es/#lugar",
+          name: "Ojuelos Altos",
+          description: p.seo.description,
+          url: "https://ojuelosaltos.es/",
+          image: "https://ojuelosaltos.es/assets/fotos/foto-aldea.jpg",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Ojuelos Altos",
+            addressRegion: "Córdoba",
+            addressCountry: "ES",
+          },
+          geo: {
+            "@type": "GeoCoordinates",
+            latitude: OJUELOS[0],
+            longitude: OJUELOS[1],
+          },
+          containedInPlace: { "@type": "Place", name: "Fuente Obejuna" },
+        },
+        ...baresInfo.map((b) => ({
+          "@type": "Restaurant",
+          name: b.nombre,
+          telephone: b.telLink.replace("tel:", ""),
+          servesCuisine: "Spanish",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: b.dir,
+            addressLocality: "Ojuelos Altos",
+            addressRegion: "Córdoba",
+            addressCountry: "ES",
+          },
+        })),
+      ],
+    });
+  }, [p, lang]);
 
   return (
     <>
@@ -94,7 +140,9 @@ export default function PuebloApp() {
           </Reveal>
           <Reveal className="mt-10">
             <p className="mb-3 text-sm font-medium text-inksoft">{p.pueblo.mapIntro}</p>
-            <MapView center={[38.22, -5.39]} zoom={10} markers={[{ pos: OJUELOS, label: p.pueblo.mapOjuelos }, { pos: FUENTE_OBEJUNA, label: p.pueblo.mapFuente }]} />
+            <Suspense fallback={<div className="h-[400px] w-full animate-pulse rounded-2xl bg-cream ring-1 ring-black/10" />}>
+              <MapView center={[38.22, -5.39]} zoom={10} markers={[{ pos: OJUELOS, label: p.pueblo.mapOjuelos }, { pos: FUENTE_OBEJUNA, label: p.pueblo.mapFuente }]} />
+            </Suspense>
           </Reveal>
           <Reveal className="mt-12 border-t-2 border-almagre/15 pt-10">
             <h3 className="mb-5 font-serif text-[1.7rem] text-verde">{p.pueblo.h3}</h3>
@@ -123,7 +171,10 @@ export default function PuebloApp() {
             ))}
           </Reveal>
           <Reveal className="mt-10" as="figure">
-            <img src="/assets/fotos/fuenteobejuna-ayuntamiento.jpg" alt={p.historia.imgAlt} loading="lazy" className="w-full rounded-2xl shadow-xl" />
+            <picture>
+              <source srcSet="/assets/fotos/fuenteobejuna-ayuntamiento.webp" type="image/webp" />
+              <img src="/assets/fotos/fuenteobejuna-ayuntamiento.jpg" alt={p.historia.imgAlt} loading="lazy" width={1600} height={1200} className="h-auto w-full rounded-2xl shadow-xl" />
+            </picture>
             <figcaption className="mt-3 text-center text-sm italic text-inksoft">{p.historia.figcaption}</figcaption>
           </Reveal>
         </div>
@@ -203,7 +254,9 @@ export default function PuebloApp() {
                     <a href={r.url} target="_blank" rel="noopener" className="mt-auto inline-flex w-fit items-center gap-2 rounded-full bg-verde px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-verde-dark">{p.rutas.open}</a>
                   </div>
                   <div className="min-h-[320px] bg-cream2">
-                    <TrackMap gpx={r.gpx} wikilocId={r.wikilocId} fallback={OJUELOS} label={ri.titulo} />
+                    <Suspense fallback={<div className="h-full min-h-[320px] w-full animate-pulse bg-cream" />}>
+                      <TrackMap gpx={r.gpx} wikilocId={r.wikilocId} fallback={OJUELOS} label={ri.titulo} />
+                    </Suspense>
                   </div>
                 </Reveal>
               );

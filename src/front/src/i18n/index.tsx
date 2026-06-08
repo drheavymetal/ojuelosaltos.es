@@ -53,8 +53,36 @@ export const DICTS: Record<Lang, Dict> = { es, en, pt, fr, de, nl, ja, zh, gl, c
 
 const STORAGE_KEY = "oa_lang";
 
-/** Elige idioma inicial: elección guardada → idioma del navegador → castellano. */
+/** Idioma por defecto: el castellano vive en la URL "limpia" (sin ?lang) y es el x-default. */
+export const DEFAULT_LANG: Lang = "es";
+
+/** URL canónica de un sitio en un idioma dado. El idioma por defecto no lleva query. */
+export function langHref(base: string, l: Lang): string {
+  return l === DEFAULT_LANG ? base : `${base}?lang=${l}`;
+}
+
+/** Idioma indicado por ?lang= en la URL, si es válido. */
+function langFromQuery(): Lang | null {
+  if (typeof window === "undefined") return null;
+  const q = new URLSearchParams(window.location.search).get("lang");
+  return q && LANG_ORDER.includes(q as Lang) ? (q as Lang) : null;
+}
+
+/** Refleja el idioma activo en la URL (?lang=xx; sin query para el idioma por defecto) sin recargar. */
+function syncUrlLang(l: Lang) {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  if (l === DEFAULT_LANG) url.searchParams.delete("lang");
+  else url.searchParams.set("lang", l);
+  if (url.href !== window.location.href) {
+    window.history.replaceState(null, "", url.href);
+  }
+}
+
+/** Elige idioma inicial: ?lang= en la URL → elección guardada → idioma del navegador → castellano. */
 function detectLang(): Lang {
+  const fromQuery = langFromQuery();
+  if (fromQuery) return fromQuery;
   try {
     const saved = localStorage.getItem(STORAGE_KEY) as Lang | null;
     if (saved && LANG_ORDER.includes(saved)) return saved;
@@ -70,7 +98,7 @@ function detectLang(): Lang {
       if (LANG_ORDER.includes(code)) return code;
     }
   }
-  return "es";
+  return DEFAULT_LANG;
 }
 
 type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: Dict };
@@ -81,7 +109,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   // Detecta en cliente tras montar (evita desajustes en SSR/primer render).
   useEffect(() => {
-    setLangState(detectLang());
+    const l = detectLang();
+    setLangState(l);
+    syncUrlLang(l); // URL, idioma y canónica quedan coherentes desde el primer render.
   }, []);
 
   useEffect(() => {
@@ -90,6 +120,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const setLang = (l: Lang) => {
     setLangState(l);
+    syncUrlLang(l);
     try {
       localStorage.setItem(STORAGE_KEY, l);
     } catch {
